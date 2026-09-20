@@ -478,7 +478,7 @@ newsletter = create_newsletter(articles)
     
 if newsletter is None:
     print("Newsletter generation failed. Skipping email.")
-    return
+    sys.exit() # Use this instead of return
         
 print("Newsletter generated.")
 send_email(newsletter)
