@@ -430,7 +430,7 @@ def main():
 
     print("Starting International News Agent...")
 
-    articles = fetch_articles()
+    articles = fetch_news_articles()
 
     print(
         f"Collected {len(articles)} articles."
