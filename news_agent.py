@@ -477,8 +477,8 @@ if __name__ == "__main__":
 newsletter = create_newsletter(articles)
     
 if newsletter is None:
-print("Newsletter generation failed. Skipping email.")
-return
+    print("Newsletter generation failed. Skipping email.")
+    return
         
 print("Newsletter generated.")
 send_email(newsletter)
