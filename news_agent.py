@@ -198,64 +198,20 @@ URL:
 # ============================================================
 
 def ask_openrouter(prompt):
-   
-    try:
-        # Keep your existing requests.post(...) code exactly as it is here
-        response = requests.post( ... ) 
-        
-        # 1. Check for HTTP errors (like 404 or 500)
-        response.raise_for_status()
-        
-        # 2. MOVE THIS LINE INSIDE THE TRY BLOCK
-        data = response.json()
-        return data
-        
-    except Exception as e:
-        print(f"API Request failed: {e}")
-        # 3. Return None instead of crashing if the request fails
-        return None
-    content = data["choices"][0]["message"].get("content")
-    return content or "No briefing generated (possible API or safety filter block)."
-
     url = "https://openrouter.ai/api/v1/chat/completions"
-
     headers = {
-
-        "Authorization":
-            f"Bearer {OPENROUTER_API_KEY}",
-
-        "Content-Type":
-            "application/json",
-
-        "HTTP-Referer":
-            "https://github.com/",
-
-        "X-Title":
-            "Daily International News Agent"
-
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://github.com/",
+        "X-Title": "Daily International News Agent"
     }
-
     payload = {
-
         "model": OPENROUTER_MODEL,
-
         "messages": [
-
             {
                 "role": "system",
-
                 "content": """
-You are an international news research assistant.
-
-Your job is to create a factual daily international
-news briefing.
-
-Do not invent facts.
-
-Use only the information supplied in the articles.
-
-Prefer stories that have significant implications for:
-
+You are an international news research assistant. Your job is to create a factual daily international news briefing. Do not invent facts. Use only the information supplied in the articles. Prefer stories that have significant implications for:
 - international relations
 - geopolitics
 - international trade
@@ -267,47 +223,31 @@ Prefer stories that have significant implications for:
 - diplomacy
 - climate
 - global business
-
 Avoid:
-
 - celebrity news
 - entertainment
 - sports
 - clickbait
 - duplicate stories
 - purely local stories
-
-When several articles report the same event,
-combine them into one story and cite multiple sources.
+When several articles report the same event, combine them into one story and cite multiple sources.
 """
             },
-
-            {
-                "role": "user",
-                "content": prompt
-            }
-
+            {"role": "user", "content": prompt}
         ],
-
         "temperature": 0.2,
-
         "max_tokens": 6000
-
     }
-
-    response = requests.post(
-        url,
-        headers=headers,
-        json=payload,
-        timeout=60
-    )
-
-    response.raise_for_status()
-
-    data = response.json()
-
-    return data["choices"][0]["message"]["content"]
-
+    
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=60)
+        response.raise_for_status()
+        data = response.json()
+        content = data["choices"][0]["message"].get("content")
+        return content or "No briefing generated (possible API or safety filter block)."
+    except Exception as e:
+        print(f"API Request failed: {e}")
+        return None
 
 # ============================================================
 # CREATE NEWSLETTER
@@ -384,30 +324,20 @@ Here are the articles:
 # ============================================================
 
 def markdown_to_html(text):
-
+    # Guard against None values to prevent the AttributeError
+    if not text:
+        return "No content generated."
+        
     text = html.escape(text)
-
-    text = text = re.sub(r"(https?://[^\s<]+?)(?=[.,;)]?(?:\s|<|$))", r'<a href="\1">\1</a>', text)
-
-    text = text.replace(
-        "\n\n",
-        "<br><br>"
-    )
-
-    text = text.replace(
-        "\n",
-        "<br>"
-    )
-
-    # Make URLs clickable
-    text = re.sub(
-        r"(https?://[^\s<]+)",
-        r'<a href="\1">\1</a>',
-        text
-    )
-
+    
+    # Replace newlines
+    text = text.replace("\n\n", "<br><br>")
+    text = text.replace("\n", "<br>")
+    
+    # Make URLs clickable (Safe regex that ignores trailing punctuation)
+    text = re.sub(r"(https?://[^\s<]+?)(?=[.,;)]?(?:\s|<|$))", r'<a href="\1">\1</a>', text)
+    
     return text
-
 
 # ============================================================
 # SEND EMAIL
@@ -544,3 +474,12 @@ def main():
 if __name__ == "__main__":
 
     main()
+newsletter = create_newsletter(articles)
+    
+    if newsletter is None:
+        print("Newsletter generation failed. Skipping email.")
+        return
+        
+    print("Newsletter generated.")
+    send_email(newsletter)
+    print("Email sent successfully.")
