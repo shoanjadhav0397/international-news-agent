@@ -373,9 +373,7 @@ def markdown_to_html(text):
 
     text = html.escape(text)
 
-    text = text = re.sub(r"(https?://[^\s<]+?)(?=[.,;)]?(?:\s|<|$))", r'<a href="\1">\1</a>', text),
-        text
-    )
+    text = text = re.sub(r"(https?://[^\s<]+?)(?=[.,;)]?(?:\s|<|$))", r'<a href="\1">\1</a>', text)
 
     text = text.replace(
         "\n\n",
