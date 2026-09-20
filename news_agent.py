@@ -476,10 +476,10 @@ if __name__ == "__main__":
     main()
 newsletter = create_newsletter(articles)
     
-    if newsletter is None:
-    print("Newsletter generation failed. Skipping email.")
-    return
+if newsletter is None:
+print("Newsletter generation failed. Skipping email.")
+return
         
-    print("Newsletter generated.")
-    send_email(newsletter)
-    print("Email sent successfully.")
+print("Newsletter generated.")
+send_email(newsletter)
+print("Email sent successfully.")
