@@ -472,14 +472,18 @@ def main():
 
 
 if __name__ == "__main__":
-
-    main()
-newsletter = create_newsletter(articles)
+    print("Starting International News Agent...")
     
-if newsletter is None:
-    print("Newsletter generation failed. Skipping email.")
-    sys.exit() # Use this instead of return
-        
-print("Newsletter generated.")
-send_email(newsletter)
-print("Email sent successfully.")
+    # 1. Fetch the articles (make sure to use your actual function name here, likely fetch_articles)
+    articles = fetch_articles() 
+    
+    # 2. Generate the newsletter
+    newsletter = create_newsletter(articles)
+    
+    # 3. Safely handle the email sending
+    if newsletter is None:
+        print("Newsletter generation failed. Skipping email.")
+    else:
+        print("Newsletter generated.")
+        send_email(newsletter)
+        print("Email sent successfully.")
