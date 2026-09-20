@@ -198,6 +198,10 @@ URL:
 # ============================================================
 
 def ask_openrouter(prompt):
+   
+    data = response.json()
+    content = data["choices"][0]["message"].get("content")
+    return content or "No briefing generated (possible API or safety filter block)."
 
     url = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -369,9 +373,7 @@ def markdown_to_html(text):
 
     text = html.escape(text)
 
-    text = re.sub(
-        r"\*\*(.*?)\*\*",
-        r"<strong>\1</strong>",
+    text = text = re.sub(r"(https?://[^\s<]+?)(?=[.,;)]?(?:\s|<|$))", r'<a href="\1">\1</a>', text),
         text
     )
 
