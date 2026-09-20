@@ -199,7 +199,21 @@ URL:
 
 def ask_openrouter(prompt):
    
-    data = response.json()
+    try:
+        # Keep your existing requests.post(...) code exactly as it is here
+        response = requests.post( ... ) 
+        
+        # 1. Check for HTTP errors (like 404 or 500)
+        response.raise_for_status()
+        
+        # 2. MOVE THIS LINE INSIDE THE TRY BLOCK
+        data = response.json()
+        return data
+        
+    except Exception as e:
+        print(f"API Request failed: {e}")
+        # 3. Return None instead of crashing if the request fails
+        return None
     content = data["choices"][0]["message"].get("content")
     return content or "No briefing generated (possible API or safety filter block)."
 
