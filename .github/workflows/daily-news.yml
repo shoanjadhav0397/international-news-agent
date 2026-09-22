@@ -4,10 +4,10 @@ on:
 
   schedule:
 
-    # 7:00 AM IST
-    # 7:00 IST = 01:30 UTC
+    # 2:00 PM IST
+    # 14:00 IST = 08:30 UTC
 
-    - cron: "30 1 * * *"
+    - cron: "30 8 * * *"
 
   workflow_dispatch:
 
